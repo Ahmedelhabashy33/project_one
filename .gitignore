@@ -1,0 +1,8 @@
+*.pyc
+__pycache__/
+*.conf
+!*.conf
+.idea/
+.vscode/
+*.log
+filestore/

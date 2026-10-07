@@ -1,0 +1,19 @@
+<odoo>
+    <record id="agent_view_tree" model="ir.ui.view">
+        <field name="name">agent tree</field>
+        <field name="model">agent</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="agent_action" model="ir.actions.act_window">
+        <field name="name">agent action</field>
+        <field name="res_model">agent</field>
+    </record>
+
+
+</odoo>
