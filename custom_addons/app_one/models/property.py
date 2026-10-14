@@ -19,6 +19,8 @@ class property(models.Model):
     living_area = fields.Integer()
     facades = fields.Integer()
     garage=fields.Boolean()
+
+    active=fields.Boolean(default=True)
     garden = fields.Boolean()
     garden_area = fields.Integer()
     garden_orientation = fields.Selection([

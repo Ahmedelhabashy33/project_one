@@ -8,6 +8,7 @@
                 <field name="postcode" />
                 <field name="owner_id" />
                 <field name="state" />
+                <field name="active" />
                 <field name="date_available" />
                 <field name="selling_price" />
                 <field name="garden" />
@@ -53,6 +54,7 @@
                             <field name="owner_id" />
                             <field name="owner_address" />
                             <field name="owner_phone" />
+                            <field name="active" invisible="1"/>
                               <field name="garden_area" />
                               <field name="garage"/>
                               <field name="bedrooms"/>
