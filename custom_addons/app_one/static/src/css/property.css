@@ -1,0 +1,18 @@
+/* <tree class="header_edit"> */
+
+.header_edit .o_list_table {
+    background: #ffffff;
+    color: #2c3e50;
+}
+
+.header_edit .o_list_table thead th {
+    background: #12525a;
+    color: #ffffff;
+}
+
+.header_edit .o_list_table tbody tr.o_data_row:hover > td {
+    background: #e4f1f1;
+    cursor: pointer;
+}
+
+

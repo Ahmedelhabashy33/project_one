@@ -5,13 +5,16 @@ from odoo.exceptions import ValidationError
 
 class property(models.Model):
     _name = 'property'
+    _description = 'Property'
+    _inherit = ['mail.thread' , 'mail.activity.mixin']
 
     name = fields.Char(required=1)
-    description = fields.Text()
+    description = fields.Text(tracking=True)
     postcode = fields.Char(required=1)
-    date_available = fields.Date()
+    date_available = fields.Date(tracking=True)
     expected_price = fields.Float()
     selling_price = fields.Float()
+    diff = fields.Float(compute='_compute_diff' ,store=True)
     bedrooms = fields.Integer()
     living_area = fields.Integer()
     facades = fields.Integer()
@@ -22,6 +25,8 @@ class property(models.Model):
         ('north', 'North'),('south', 'South'),('east', 'East'),('west', 'West'),
     ])
     owner_id=fields.Many2one('owner')
+    owner_address = fields.Char(related='owner_id.address')
+    owner_phone = fields.Char(related='owner_id.phone')
     tag_ids = fields.Many2many('tag')
     state=fields.Selection([
         ('draft', 'Draft'),
@@ -33,6 +38,23 @@ class property(models.Model):
     _sql_constraints = [
         ('unique_name','unique(name)','This name already exists.')
     ]
+
+    Line_ids = fields.One2many('property.line','property_id')
+
+    @api.depends('selling_price','expected_price')
+    def _compute_diff(self):
+        for record in self:
+            print("record is diff")
+            record.diff = record.selling_price - record.expected_price
+
+    @api.onchange('expected_price')
+    def _onchange_expected_price(self):
+        for record in self:
+            print("record is diff")
+            if record.expected_price < 0:
+                return {
+                    'warning' :{ 'title' : 'warning', 'message'  : 'Negative value' , 'type' : 'notification' },
+                }
 
     @api.constrains('bedrooms')
     def _check_bedrooms_greater_zero(self):
@@ -78,3 +100,11 @@ class property(models.Model):
     #     res=super().unlink()
     #     print("unlinking property in terminal")
     #     return res
+
+
+    class PropertyLine(models.Model):
+        _name = 'property.line'
+
+        property_id = fields.Many2one('property')
+        area = fields.Float()
+        description = fields.Char()

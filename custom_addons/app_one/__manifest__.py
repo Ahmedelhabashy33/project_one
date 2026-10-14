@@ -3,7 +3,7 @@
     'author': "Ahmed Elhabashy",
     'category': "Custom",
     'version': "17.0.1.0.0",
-    'depends': ['base'],
+    'depends': ['base' , 'sale_management' , 'account' , 'mail'],
     'data': [
           'security/ir.model.access.csv',
          'views/property_view.xml',
@@ -11,8 +11,12 @@
         'views/owner_view.xml',
         'views/tag_view.xml',
         'views/base_menu.xml',
+        'views/sale_order_view.xml',
     ],
     'license': 'LGPL-3',
+    'assets':{
+        'web.assets_backend' : ['app_one\static\src\css\property.css']
+    },
     'application': True,
     'installable': True,
 
