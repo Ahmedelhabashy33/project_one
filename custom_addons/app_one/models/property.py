@@ -19,7 +19,8 @@ class property(models.Model):
     living_area = fields.Integer()
     facades = fields.Integer()
     garage=fields.Boolean()
-
+    expected_selling_date = fields.Date(tracking=True)
+    is_late = fields.Boolean(tracking=True)
     active=fields.Boolean(default=True)
     garden = fields.Boolean()
     garden_area = fields.Integer()
@@ -33,8 +34,9 @@ class property(models.Model):
     state=fields.Selection([
         ('draft', 'Draft'),
         ('pending', 'Pending'),
-        ('sold','Sold')
-    ])
+        ('sold','Sold'),
+        ('closed', 'Closed')
+    ],default='draft')
 
 
     _sql_constraints = [
@@ -79,6 +81,21 @@ class property(models.Model):
         for record in self:
             print("record is draft")
             record.state = 'draft'
+
+    def action_to_closed(self):
+        for record in self:
+            record.state = 'closed'
+
+
+    def check_expected_selling_date(self):
+            property_ids=self.search([])
+            for record in property_ids:
+                if record.expected_selling_date and record.expected_selling_date < fields.date.today():
+                    record.is_late = True
+
+
+
+
 
 
     # @api.model_create_multi
