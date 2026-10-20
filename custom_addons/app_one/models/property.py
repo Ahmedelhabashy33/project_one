@@ -1,13 +1,12 @@
-from  odoo import models, fields, api
-
-from odoo.exceptions import ValidationError
-
+from odoo import api, fields, models
 
 class property(models.Model):
     _name = 'property'
     _description = 'Property'
     _inherit = ['mail.thread' , 'mail.activity.mixin']
 
+
+    ref = fields.Char(default='New' , readonly=True)
     name = fields.Char(required=1)
     description = fields.Text(tracking=True)
     postcode = fields.Char(required=1)
@@ -69,21 +68,22 @@ class property(models.Model):
 
     def action_to_pending(self):
         for record in self:
-            print("record is pendig")
+            record.create_history_record(record.state,'pending')
             record.state = 'pending'
 
     def action_to_sold(self):
         for record in self:
-            print("record is sold")
+            record.create_history_record(record.state,'sold')
             record.state = 'sold'
 
     def action_to_draft(self):
         for record in self:
-            print("record is draft")
+            record.create_history_record(record.state,'draft')
             record.state = 'draft'
 
     def action_to_closed(self):
         for record in self:
+            record.create_history_record(record.state,'closed')
             record.state = 'closed'
 
 
@@ -95,7 +95,11 @@ class property(models.Model):
 
 
 
-
+    def action(self):
+        print(self.env['owner'].create({
+            'name':'maged',
+            "phone":"0100000000"
+        }))
 
 
     # @api.model_create_multi
@@ -127,3 +131,29 @@ class property(models.Model):
         property_id = fields.Many2one('property')
         area = fields.Float()
         description = fields.Char()
+
+
+
+    @api.model
+    def create(self, vals):
+        res=super(property,self).create(vals)
+        if res.ref == "New":
+            res.ref  = self.env["ir.sequence"].next_by_code("property_seq")
+        return res
+
+
+    def create_history_record(self,old_state,new_state,reason):
+        for record in self:
+            record.env['property.history'].create({
+                'user_id':record.env.uid,
+                'property_id':record.id,
+                'old_state':old_state,
+                'new_state':new_state,
+                'reason' :reason or "",
+            })
+
+
+    def action_open_change_state_wizard(self):
+        action = self.env['ir.actions.actions']._for_xml_id('app_one.change_state_wizard_action')
+        action['context']={'default_property_id' :self.id}
+        return action
