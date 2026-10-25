@@ -14,12 +14,14 @@
         'views/base_menu.xml',
         'views/sale_order_view.xml',
         'views/property_history_view.xml',
+        'views/account_move_view.xml',
         'wizard/change_state_wizard_view.xml',
         'reports/property_report.xml',
     ],
     'license': 'LGPL-3',
     'assets':{
-        'web.assets_backend' : ['app_one\static\src\css\property.css']
+        'web.assets_backend' : ['app_one\static\src\css\property.css'],
+        'web.report_assets_common' : ['app_one\static\src\css\font.css']
     },
     'application': True,
     'installable': True,

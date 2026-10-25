@@ -42,7 +42,7 @@ class property(models.Model):
         ('unique_name','unique(name)','This name already exists.')
     ]
 
-    Line_ids = fields.One2many('property.line','property_id')
+    line_ids = fields.One2many('property.line','property_id')
 
     @api.depends('selling_price','expected_price')
     def _compute_diff(self):
@@ -78,7 +78,7 @@ class property(models.Model):
 
     def action_to_draft(self):
         for record in self:
-            record.create_history_record(record.state,'draft')
+            record.create_history_record(record.state,'draft' )
             record.state = 'draft'
 
     def action_to_closed(self):
@@ -96,10 +96,8 @@ class property(models.Model):
 
 
     def action(self):
-        print(self.env['owner'].create({
-            'name':'maged',
-            "phone":"0100000000"
-        }))
+
+        print(self.env['property'].search([('name' ,'=' ,'sodic')]))
 
 
     # @api.model_create_multi
@@ -142,7 +140,7 @@ class property(models.Model):
         return res
 
 
-    def create_history_record(self,old_state,new_state,reason):
+    def create_history_record(self,old_state,new_state,reason = ""):
         for record in self:
             record.env['property.history'].create({
                 'user_id':record.env.uid,
@@ -150,6 +148,7 @@ class property(models.Model):
                 'old_state':old_state,
                 'new_state':new_state,
                 'reason' :reason or "",
+                'line_ids': [(0, 0 ,{'description' :line.description ,'area' :line.area }) for line in record.line_ids],
             })
 
 
@@ -157,3 +156,12 @@ class property(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id('app_one.change_state_wizard_action')
         action['context']={'default_property_id' :self.id}
         return action
+
+
+    def action_open_related_owner(self):
+          action=self.env['ir.actions.actions']._for_xml_id('app_one.owner_action')
+          view_id = self.env.ref('app_one.owner_view_form').id
+          action['res_id'] = self.owner_id.id
+          action['views'] = [[view_id,'form']]
+          return action
+

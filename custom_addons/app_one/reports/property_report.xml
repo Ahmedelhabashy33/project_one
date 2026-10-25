@@ -41,7 +41,7 @@
                         }
                     </style>
 
-                    <h1>Property Report</h1>
+                    <h1 style="font-family : 'blackopsone;'">Property Report</h1>
 
                     <t t-foreach="docs" t-as="o">
                         <table>
@@ -79,7 +79,7 @@
                                 <th>AArea</th>
                             </thead>
                             <tbody>
-                                <t t-foreach="o.Line_ids" t-as="line">
+                                <t t-foreach="o.line_ids" t-as="line">
                                     <tr>
                                         <td>
                                     <t  t-esc="line.description"/>

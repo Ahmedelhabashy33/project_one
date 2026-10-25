@@ -27,6 +27,11 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                         <button name="action_open_related_owner"
+                                 type="object" icon="fa-user" string="Owner"  invisible="not owner_id"/>
+                    </div>
+                    <widget name="web_ribbon" title="Archive" bg_color="text-bg-danger" invisible="active"/>
                     <header>
                         <button name="action" type="object" string="Action" class="btn-success" invisible="state == 'draft'"/>
                         <button name="action_to_draft" type="object" string="draft" class="btn-success" invisible="state in ('draft','closed')"/>
@@ -75,7 +80,7 @@
 
                     <notebook>
                         <page string="bedrooms">
-                             <field name="Line_ids">
+                             <field name="line_ids">
                             <tree editable="bottom">
                                 <field name="description"/>
                                 <field name="area"/>
