@@ -1,4 +1,6 @@
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
+
 
 class property(models.Model):
     _name = 'property'
@@ -26,6 +28,8 @@ class property(models.Model):
     garden_orientation = fields.Selection([
         ('north', 'North'),('south', 'South'),('east', 'East'),('west', 'West'),
     ])
+
+    agent_id = fields.Many2one('agent')
     owner_id=fields.Many2one('owner')
     owner_address = fields.Char(related='owner_id.address')
     owner_phone = fields.Char(related='owner_id.phone')
@@ -39,7 +43,7 @@ class property(models.Model):
 
 
     _sql_constraints = [
-        ('unique_name','unique(name)','This name already exists.')
+        ('unique_name','unique(name)','This name already exists.')  #علشام متعملش property بنفس اسم واحدة معمولة
     ]
 
     line_ids = fields.One2many('property.line','property_id')
@@ -56,7 +60,7 @@ class property(models.Model):
             print("record is diff")
             if record.expected_price < 0:
                 return {
-                    'warning' :{ 'title' : 'warning', 'message'  : 'Negative value' , 'type' : 'notification' },
+                    'warning' :{ 'title' : 'warning', 'message'  : 'Negative value'},
                 }
 
     @api.constrains('bedrooms')

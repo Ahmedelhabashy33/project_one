@@ -1,12 +1,30 @@
 <odoo>
-    <record id="agent_view_tree" model="ir.ui.view">
-        <field name="name">agent tree</field>
+         <record id="agent_view_tree" model="ir.ui.view">
+            <field name="name">agent tree</field>
+            <field name="model">agent</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="agent_view_form" model="ir.ui.view">
+        <field name="name">agent form</field>
         <field name="model">agent</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name" />
-
-            </tree>
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <field name="property_ids">
+                        <tree>
+                            <field name="name"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
         </field>
     </record>
 

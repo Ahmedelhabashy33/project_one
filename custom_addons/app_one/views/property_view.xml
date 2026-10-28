@@ -8,7 +8,7 @@
                 <field name="postcode" />
                 <field name="owner_id" />
                 <field name="state" />
-                 <field name="is_late" invisible="1"/>
+                 <field name="is_late"/>
                 <field name="active" />
                 <field name="date_available" />
                 <field name="selling_price" />
@@ -64,6 +64,7 @@
                         <group string="Additional Info">
                               <field name="facades" readonly="state == 'closed'"/>
                             <field name="owner_id" readonly="state == 'closed'"/>
+                            <field name="agent_id" />
                             <field name="owner_address" readonly="state == 'closed'"/>
                             <field name="owner_phone" readonly="state == 'closed'"/>
                             <field name="active" invisible="1" readonly="state == 'closed'"/>
@@ -150,5 +151,6 @@
         <field name="interval_type">days</field>
         <field name="numbercall">-1</field>
     </record>
+
 
 </odoo>
