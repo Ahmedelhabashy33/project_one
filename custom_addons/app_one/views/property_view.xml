@@ -34,6 +34,7 @@
                     <widget name="web_ribbon" title="Archive" bg_color="text-bg-danger" invisible="active"/>
                     <header>
                         <button name="action" type="object" string="Action" class="btn-success" invisible="state == 'draft'"/>
+                        <button name="get_properties" type="object" string="Test Call Get Properties" class="btn-success" invisible="state == 'draft'"/>
                         <button name="action_to_draft" type="object" string="draft" class="btn-success" invisible="state in ('draft','closed')"/>
                         <button name="action_to_sold" type="object" string="sold" class="btn-primary" invisible="state != 'pending' "/>
                         <button name="action_to_pending" type="object" string="pending" class="btn-secondary" invisible="state != 'draft'"/>
@@ -119,6 +120,7 @@
     <record id="property_action" model="ir.actions.act_window">
         <field name="name">property</field>
         <field name="res_model">property</field>
+
     </record>
 
     <record id="property_closed_server_action" model="ir.actions.server">

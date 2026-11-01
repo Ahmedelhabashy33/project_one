@@ -1,5 +1,6 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+import requests
 
 
 class property(models.Model):
@@ -9,7 +10,7 @@ class property(models.Model):
 
 
     ref = fields.Char(default='New' , readonly=True)
-    name = fields.Char(required=1)
+    name = fields.Char(required=1 ,translate=True)
     description = fields.Text(tracking=True)
     postcode = fields.Char(required=1)
     date_available = fields.Date(tracking=True)
@@ -169,3 +170,13 @@ class property(models.Model):
           action['views'] = [[view_id,'form']]
           return action
 
+    def get_properties(self):
+        payload = dict({})
+        try:
+            response = requests.get('http://localhost:8069/v1/properties',data=payload)
+            if response.status_code == 200:
+                print("successful")
+            else:
+                print("failed")
+        except Exception as e:
+            raise ValidationError(str(e))

@@ -1,7 +1,25 @@
+import math
+from urllib.parse import parse_qs
+
+from PIL.ImageChops import offset
+
 from odoo import http
 from odoo.http import request
 import json
 
+def valid_response(data , status ,pagination_info):
+    response_body={
+        'data' : data
+        }
+    if pagination_info:
+        response_body['pagination_info'] = pagination_info
+    return request.make_json_response(response_body, status=status)
+
+def invalid_response(error , status):
+    response_body={
+        'error' : error
+        }
+    return request.make_json_response(response_body, status=status)
 
 class PropertyApi(http.Controller):
     @http.route(['/v1/property'],methods=["POST"], type='http', auth='none', csrf=False)
@@ -15,15 +33,12 @@ class PropertyApi(http.Controller):
         try:
             res = request.env['property'].sudo().create(vals)
             if res:
-                return request.make_json_response({
-                    "message": "Property created successfully",
+                return valid_response({
                     "name": res.name,
                     "id": res.id,
                 },status=201)
         except Exception as e:
-            return request.make_json_response({
-                "message": str(e),
-            },status=400)
+            return invalid_response(str(e),status=400)
 
 
     @http.route("/v1/property/<int:property_id>" , methods=["PUT"], type='http', auth='none', csrf=False)
@@ -34,12 +49,9 @@ class PropertyApi(http.Controller):
                 return request.make_json_response({
                     "message": "Property does not exist !!",
                 },status=404)
-            print(property_id)
             args = request.httprequest.data.decode()
             vals = json.loads(args)
-            print(vals)
             property_id.write(vals)
-            print(property_id.garden_area)
             return request.make_json_response({
                 "message": "Property updated successfully",
             },status=200)
@@ -87,4 +99,38 @@ class PropertyApi(http.Controller):
                 "message": str(e),
                 },status=404)
 
+    @http.route("/v1/properties", methods=["GET"], type='http', auth='none', csrf=False)
+    def get_property_list(self):
+        try:
+            params = parse_qs(request.httprequest.query_string.decode('utf-8'))
+            property_domain=[]
+            page = offset = None
+            limit = 5
+            if params:
+                if params.get('limit'):
+                    limit = int(params.get('limit')[0])
+                if params.get('page'):
+                    page = int(params.get('page')[0])
+            if page:
+                offset = (page * limit) - limit
+            if params.get('state'):
+                property_domain += (('state' , '=' , params.get('state')[0]))
+            property_ids = request.env['property'].sudo().search(property_domain, offset=offset,limit=limit , order='id desc')
+            property_count = request.env['property'].sudo().search_count(property_domain)
+            print(page)
+            print(limit)
 
+            if not property_ids:
+                return invalid_response("There are not records !!", status=404)
+            return valid_response([{
+                    "id": property_id.id,
+                    "name": property_id.name,
+                    "postcode": property_id.postcode,
+            }for property_id in property_ids], pagination_info={
+                  'page' : page if page else 0,
+                  'limit' : limit ,
+                  'pages' :math.ceil (property_count / limit) if limit else 1,
+                   'count' :property_count
+                     } , status=200)
+        except Exception as e:
+            return invalid_response( str(e), status=404)
