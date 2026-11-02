@@ -10,8 +10,8 @@ class property(models.Model):
 
 
     ref = fields.Char(default='New' , readonly=True)
-    name = fields.Char(required=1 ,translate=True)
-    description = fields.Text(tracking=True)
+    name = fields.Char(required=1 )
+    description = fields.Text(tracking=True ,translate=True)
     postcode = fields.Char(required=1)
     date_available = fields.Date(tracking=True)
     expected_price = fields.Float()
@@ -180,3 +180,11 @@ class property(models.Model):
                 print("failed")
         except Exception as e:
             raise ValidationError(str(e))
+
+
+    def property_xlsx_report(self):
+        return {
+            'type' : 'ir.actions.act_url',
+            'url' : f'/property/excel/report/{self.env.context.get("active_ids")}',
+            'target': 'new',
+         }

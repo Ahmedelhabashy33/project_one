@@ -21,6 +21,25 @@ def invalid_response(error , status):
         }
     return request.make_json_response(response_body, status=status)
 
+# class PropertyApi(http.Controller):
+#     @http.route(['/v1/property'],methods=["POST"], type='http', auth='none', csrf=False)
+#     def posy_property(self):
+#         args = request.httprequest.data.decode()
+#         vals =  json.loads(args)
+#         if not vals.get('name'):
+#             return request.make_json_response({
+#                 "message": "name is required !!",
+#             },status=404)
+#         try:
+#             res = request.env['property'].sudo().create(vals)
+#             if res:
+#                 return valid_response({
+#                     "name": res.name,
+#                     "id": res.id,
+#                 },status=201)
+#         except Exception as e:
+#             return invalid_response(str(e),status=400)
+
 class PropertyApi(http.Controller):
     @http.route(['/v1/property'],methods=["POST"], type='http', auth='none', csrf=False)
     def posy_property(self):
@@ -31,11 +50,18 @@ class PropertyApi(http.Controller):
                 "message": "name is required !!",
             },status=404)
         try:
-            res = request.env['property'].sudo().create(vals)
+            # res = request.env['property'].sudo().create(vals)
+            cr = request.env.cr
+            columns = ','.join(vals.keys())
+            values = ','.join(['%s'] * len(vals))
+            query = f"""INSERT INTO property ({columns}) VALUES ({values}) RETURNING id,name ,postcode"""
+            cr.execute(query, tuple(vals.values()))
+            res = cr.fetchone()
             if res:
-                return valid_response({
-                    "name": res.name,
-                    "id": res.id,
+                return request.make_json_response({
+                    "id": res[0],
+                    "name": res[1],
+                    "postcode" : res[2],
                 },status=201)
         except Exception as e:
             return invalid_response(str(e),status=400)
